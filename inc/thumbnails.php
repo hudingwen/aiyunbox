@@ -41,15 +41,14 @@ function default_attachment_display_settings() {
 
 
 //为发图便利做改善 - 文章内图片支持fancy
-add_filter('the_content', 'fancybox');
-function fancybox ($content)
-{ global $post;
-$pattern = "/<a(.*?)href=('|\")([^>]*).(bmp|gif|jpeg|jpg|png|swf|webp)('|\")(.*?)>(.*?)<\/a>/i";
-$replacement = '<a$1href=$2$3.$4$5 data-fancybox="gallery" $6>$7</a>';
-$content = preg_replace($pattern, $replacement, $content);
-return $content;
-}
-
+/** 图片灯箱自动为图片添加链接 **/ 
+add_filter('the_content', 'fancybox'); 
+function fancybox($content){ 
+ $pattern = array( "/<img(.*?)src=('|\")([^>]*).(bmp|gif|jpeg|jpg|png|swf|webp)('|\")(.*?)>/i", "/<a(.*?)href=('|\")([^>]*).(bmp|gif|jpeg|jpg|png|swf|webp)('|\")(.*?)>(.*?)<\/a>/i" );
+ $replacement = array( '<a$1href=$2$3.$4$5 data-fancybox="gallery"><img$1src=$2$3.$4$5$6></a>', '<a$1href=$2$3.$4$5 data-fancybox="gallery"$6>$7</a>' ); 
+ $content = preg_replace($pattern, $replacement, $content); 
+ return $content; 
+ }
 //删除文章时删除图片附件
 function delete_post_and_attachments($post_ID) {
     global $wpdb;

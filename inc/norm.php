@@ -8,12 +8,22 @@ wp_register_style( 'bifont', get_template_directory_uri() . '/assets/bifont/boot
 wp_enqueue_style( 'bifont' );
 wp_register_style( 'stylecss', get_template_directory_uri() . '/style.css' );
 wp_enqueue_style( 'stylecss' );
+//加载文章内图片支持
+wp_register_style( 'fancyboxcss', get_template_directory_uri() . '/assets/fancybox/fancybox.6.1.css' );
+wp_enqueue_style( 'fancyboxcss' );
+
 wp_register_script( 'jquery-min', get_template_directory_uri() . '/assets/js/jquery.min.js', array(), '', false ); //false就在页头显示
 wp_enqueue_script( 'jquery-min' );
 wp_register_script( 'bootstrap', get_template_directory_uri() . '/assets/js/bootstrap.min.js', array(), '', true );
 wp_enqueue_script( 'bootstrap' );
 wp_register_script( 'dsjs', get_template_directory_uri() . '/assets/js/js.js', array(), '', true );
 wp_enqueue_script( 'dsjs' );
+//加载文章内图片支持
+wp_register_script( 'fancyboxjs', get_template_directory_uri() . '/assets/fancybox/fancybox.umd.6.1.js', array(), '', true );
+wp_enqueue_script( 'fancyboxjs' );
+wp_register_script( 'fancyboxinit', get_template_directory_uri() . '/assets/fancybox/fancybox.init.js', array(), '', true );
+wp_enqueue_script( 'fancyboxinit' );
+
 }
 add_action('wp_enqueue_scripts', 'dsjs_add_scripts');
 
