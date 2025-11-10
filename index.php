@@ -5,7 +5,21 @@
         <div class="row g-3">
 			<?php $cat_id_c = get_theme_mod('ds_ban_c'); ?>
 			<?php $cat_id_r = get_theme_mod('ds_ban_r'); ?>
-            <div class="<?php echo ($cat_id_c == 9999999) ? 'col-lg-9' : 'col-lg-7'; ?>">
+			
+			
+			<?php
+				if ($cat_id_c == 9999999 && $cat_id_r == 9999999) {
+					$top_class = 'col-lg-12';
+					$top_width = 1200;
+				} elseif ($cat_id_c == 9999999) {
+					$top_class = 'col-lg-9';
+					$top_width = 900;
+				} else {
+					$top_class = 'col-lg-7';
+					$top_width = 700;
+				}
+			?>
+            <div class="<?php echo esc_attr($top_class); ?>">
                 <div id="banner" class="carousel slide carousel-fade" data-bs-ride="carousel">
                     <div class="carousel-indicators">
                     <?php
@@ -29,11 +43,14 @@
                         <div class="carousel-item <?php if ( $i == '0') { echo 'active'; } ?>">
                             <a class="banlist" href="<?php the_permalink(); ?>">
                                 <?php
-								$width  = ($cat_id_c == 9999999) ? 900 : 700; // 判断宽度
+								$width  = $top_width; // 判断宽度
 								$height = 400; // 固定高度
 
                                 if ( has_post_thumbnail() ) {
-                                    the_post_thumbnail(array($width, $height, true));
+                                    the_post_thumbnail(array($width, $height, true),
+									array(
+										'class' => 'my-top-thumb'
+									));
                                 } else {
                                     echo wp_get_attachment_image(get_theme_mod('ds_nopic'), array($width, $height, true));
                                 }
@@ -72,7 +89,8 @@
                         }
                         ?>
                         <h3><?php the_title(); ?></h3>
-                        <b><?php //echo get_cat_name($cat_id_c); ?></b>
+						
+                        <b><?php echo get_cat_name($cat_id_c); ?></b>
                     </a>
                     <?php endwhile; wp_reset_query(); ?>
                 </div>
@@ -100,7 +118,7 @@
                         <h3><?php the_title(); ?></h3>
                         <p style="display:none;"><i class="bi bi-clock"></i><?php //the_time('Y-m-d'); ?></p>
                     </div>
-                    <b><?php //echo get_cat_name($cat_id_r); ?></b>
+                    <b><?php echo get_cat_name($cat_id_r); ?></b>
                 </a>
                 <?php endwhile; wp_reset_query(); ?>
             </div>
