@@ -15,16 +15,17 @@ function ds_theme_customizer( WP_Customize_Manager $wp_customize){
 ////////////////////////////////////////////////////////Category select function
 function get_categories_select()
 {
-  $teh_cats = get_categories();
-  $results = [];
-  $count = count($teh_cats);
-  for ($i = 0; $i < $count; $i++) {
-    if (isset($teh_cats[$i]))
-      $results[$teh_cats[$i]->cat_ID] = $teh_cats[$i]->name;
-    else
-      $count++;
-  }
-  return $results;
+    $teh_cats = get_categories([
+		'hide_empty' => false, // 显示所有分类，包括没有文章的
+	]);
+    $results = [];
+	$results['']='默认';
+	$results[9999999]='无';
+	foreach ($teh_cats as $category) {
+		 $results[$category->term_id] = $category->name;
+	}
+    return $results;
+	
 }
 
 
