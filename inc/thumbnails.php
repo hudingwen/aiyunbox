@@ -131,7 +131,7 @@ class Thumbnails {
         }
         return [0, 0, (int)$sX, (int)$sY, (int)$newW, (int)$newH, (int)$cropW, (int)$cropH];
     }
-    public function imageDownsize(bool $downsize, string|int $id = null, $size = null) {
+    public function imageDownsize(bool $downsize, $id = null, $size = null) {
         if ($size === 'full') {
             return false;
         }
