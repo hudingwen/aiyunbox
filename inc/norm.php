@@ -1,5 +1,37 @@
 <?php
 
+/**
+ * 向经典编辑器添加“代码块”按钮
+ */
+function my_custom_mce_button() {
+    // 检查用户权限和编辑器是否可用
+    if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') ) {
+        return;
+    }
+    if ( 'true' == get_user_option('rich_editing') ) {
+        add_filter('mce_external_plugins', 'my_add_tinymce_plugin');
+        add_filter('mce_buttons', 'my_register_mce_button');
+    }
+}
+add_action('admin_head', 'my_custom_mce_button');
+
+/**
+ * 注册按钮到 TinyMCE 工具栏
+ */
+function my_register_mce_button($buttons) {
+    array_push($buttons, 'precode'); // 按钮 ID
+    return $buttons;
+}
+
+/**
+ * 添加插件脚本
+ */
+function my_add_tinymce_plugin($plugin_array) {
+    $plugin_array['precode'] = get_template_directory_uri() . '/assets/js/mce-precode.js?v=1';
+    return $plugin_array;
+}
+
+
 //加载css及js
 function dsjs_add_scripts(){
 wp_register_style( 'bootstrap', get_template_directory_uri() . '/assets/css/bootstrap.min.css' );
