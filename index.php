@@ -47,7 +47,12 @@
                     </button>
                 </div>
             </div>
+			<?php
+			$cat_id = get_theme_mod('ds_ban_c');
+			if ($cat_id != 9999999) : // 不是 99999 时才显示
+			?>
             <div class="col-lg-2 none_992">
+			
                 <div class="index_banner_center">
                     <?php
                     $cat_id = get_theme_mod('ds_ban_c');
@@ -68,6 +73,7 @@
                     <?php endwhile; wp_reset_query(); ?>
                 </div>
             </div>
+			<?php endif; ?>
             <div class="col-lg-3 none_992">
                 <?php
                     $cat_id = get_theme_mod('ds_ban_r');
