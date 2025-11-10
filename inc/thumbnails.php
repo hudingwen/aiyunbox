@@ -131,7 +131,7 @@ class Thumbnails {
         }
         return [0, 0, (int)$sX, (int)$sY, (int)$newW, (int)$newH, (int)$cropW, (int)$cropH];
     }
-    public function imageDownsize(bool $downsize, int $id, $size = null) {
+    public function imageDownsize(bool $downsize, string|int $id = null, $size = null) {
         if ($size === 'full') {
             return false;
         }
@@ -141,6 +141,10 @@ class Thumbnails {
         } else {
             [$width, $height, $crop] = $size + [0, 0, false];
         }
+		if (empty($id)) {
+			//没有设置默认缩略和文章特殊图使用主题的默认图标 
+			  return [get_template_directory_uri() . '/assets/img/blog.jpg', $width, $height, false];
+		}
         $relativeFile = trim(get_post_meta($id, '_wp_attached_file', true));
         $url = $this->resize($relativeFile, $width, $height, $crop);
         return [$url, $width, $height, false];
