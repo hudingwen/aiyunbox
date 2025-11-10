@@ -3,7 +3,9 @@
 <section class="index_banner">
     <div class="container">
         <div class="row g-3">
-            <div class="col-lg-7">
+			<?php $cat_id_c = get_theme_mod('ds_ban_c'); ?>
+			<?php $cat_id_r = get_theme_mod('ds_ban_r'); ?>
+            <div class="<?php echo ($cat_id_c == 9999999) ? 'col-lg-9' : 'col-lg-7'; ?>">
                 <div id="banner" class="carousel slide carousel-fade" data-bs-ride="carousel">
                     <div class="carousel-indicators">
                     <?php
@@ -27,10 +29,13 @@
                         <div class="carousel-item <?php if ( $i == '0') { echo 'active'; } ?>">
                             <a class="banlist" href="<?php the_permalink(); ?>">
                                 <?php
+								$width  = ($cat_id_c == 9999999) ? 900 : 700; // 判断宽度
+								$height = 400; // 固定高度
+
                                 if ( has_post_thumbnail() ) {
-                                    the_post_thumbnail(array(700, 400, true));
+                                    the_post_thumbnail(array($width, $height, true));
                                 } else {
-                                    echo wp_get_attachment_image(get_theme_mod('ds_nopic'), array(700, 400, true));
+                                    echo wp_get_attachment_image(get_theme_mod('ds_nopic'), array($width, $height, true));
                                 }
                                 ?>
                                 <h2><?php the_title(); ?></h2>
@@ -48,15 +53,14 @@
                 </div>
             </div>
 			<?php
-			$cat_id = get_theme_mod('ds_ban_c');
-			if ($cat_id != 9999999) : // 不是 99999 时才显示
+			if ($cat_id_c != 9999999) : 
 			?>
             <div class="col-lg-2 none_992">
 			
                 <div class="index_banner_center">
                     <?php
-                    $cat_id = get_theme_mod('ds_ban_c');
-                    query_posts( array( 'cat'=>$cat_id, 'posts_per_page'=>2, 'ignore_sticky_posts'=>true ) );
+                    $cat_id_c = get_theme_mod('ds_ban_c');
+                    query_posts( array( 'cat'=>$cat_id_c, 'posts_per_page'=>2, 'ignore_sticky_posts'=>true ) );
                     while( have_posts() ): the_post();
                     ?>
                     <a class="zt_list" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>">
@@ -68,16 +72,20 @@
                         }
                         ?>
                         <h3><?php the_title(); ?></h3>
-                        <b><?php echo get_cat_name($cat_id); ?></b>
+                        <b><?php //echo get_cat_name($cat_id_c); ?></b>
                     </a>
                     <?php endwhile; wp_reset_query(); ?>
                 </div>
             </div>
 			<?php endif; ?>
+			
+			<?php
+			if ($cat_id_r != 9999999) : 
+			?>
             <div class="col-lg-3 none_992">
                 <?php
-                    $cat_id = get_theme_mod('ds_ban_r');
-                    query_posts( array( 'cat'=>$cat_id, 'posts_per_page'=>1, 'ignore_sticky_posts'=>true ) );
+                    $cat_id_r = get_theme_mod('ds_ban_r');
+                    query_posts( array( 'cat'=>$cat_id_r, 'posts_per_page'=>1, 'ignore_sticky_posts'=>true ) );
                     while( have_posts() ): the_post();
                     ?>
                 <a class="gglb" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>">
@@ -90,12 +98,15 @@
                     ?>
                     <div class="gg_txt">
                         <h3><?php the_title(); ?></h3>
-                        <p><i class="bi bi-clock"></i><?php the_time('Y-m-d'); ?></p>
+                        <p style="display:none;"><i class="bi bi-clock"></i><?php //the_time('Y-m-d'); ?></p>
                     </div>
-                    <b><?php echo get_cat_name($cat_id); ?></b>
+                    <b><?php //echo get_cat_name($cat_id_r); ?></b>
                 </a>
                 <?php endwhile; wp_reset_query(); ?>
             </div>
+			
+			
+			<?php endif; ?>
         </div>
     </div>
 </section>
