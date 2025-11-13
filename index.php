@@ -10,13 +10,13 @@
 			<?php
 				if ($cat_id_c == 9999999 && $cat_id_r == 9999999) {
 					$top_class = 'col-lg-12';
-					$top_width = 1200;
+					$top_width = 'medium_large_1200';
 				} elseif ($cat_id_c == 9999999) {
 					$top_class = 'col-lg-9';
-					$top_width = 900;
+					$top_width = 'medium_large_900';
 				} else {
 					$top_class = 'col-lg-7';
-					$top_width = 700;
+					$top_width = 'medium_large_700';
 				}
 			?>
             <div class="<?php echo esc_attr($top_class); ?>">
@@ -42,17 +42,15 @@
                     while ( have_posts() ) : the_post(); ?>
                         <div class="carousel-item <?php if ( $i == '0') { echo 'active'; } ?>">
                             <a class="banlist" href="<?php the_permalink(); ?>">
-                                <?php
-								$width  = $top_width; // 判断宽度
-								$height = 400; // 固定高度
+                                <?php 
 
                                 if ( has_post_thumbnail() ) {
-                                    the_post_thumbnail(array($width, $height, true),
-									array(
-										'class' => 'my-top-thumb'
-									));
+									//有特色图片
+                                    the_post_thumbnail($top_width);
+								 
                                 } else {
-                                    echo wp_get_attachment_image(get_theme_mod('ds_nopic'), array($width, $height, true));
+									//没有特色图片 
+									echo wp_get_attachment_image(get_theme_mod('ds_nopic'), $top_width);
                                 }
                                 ?>
                                 <h2><?php the_title(); ?></h2>
@@ -83,9 +81,9 @@
                     <a class="zt_list" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>">
                         <?php
                         if ( has_post_thumbnail() ) {
-                            the_post_thumbnail(array(300, 300, true));
+                            the_post_thumbnail('medium');
                         } else {
-                            echo wp_get_attachment_image(get_theme_mod('ds_nopic'), array(300, 300, true));
+                            echo wp_get_attachment_image(get_theme_mod('ds_nopic'), 'medium');
                         }
                         ?>
                         <h3><?php the_title(); ?></h3>
@@ -109,9 +107,9 @@
                 <a class="gglb" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>">
                     <?php
                     if ( has_post_thumbnail() ) {
-                        the_post_thumbnail(array(300, 400, true));
+                        the_post_thumbnail('medium');
                     } else {
-                        echo wp_get_attachment_image(get_theme_mod('ds_nopic'), array(300, 400, true));
+                        echo wp_get_attachment_image(get_theme_mod('ds_nopic'), 'medium');
                     }
                     ?>
                     <div class="gg_txt">

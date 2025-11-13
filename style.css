@@ -512,3 +512,4 @@ html.dark::-webkit-scrollbar-thumb{background:#333;}
 .ishows .widget .widget-title{padding: 15px 20px 15px 50px;margin-bottom:20px;}
 .ishows .widget .widget-title:before{top:20px;left: 30px;}
 .ishows .widget .widget-title:after{bottom:0;}
+.my-fancybox-gallery {display: flex;flex-wrap: wrap; justify-content: center;gap: 10px;}

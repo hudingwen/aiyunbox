@@ -2,18 +2,24 @@
 
 //禁止WordPress自动生成缩略图
 function hui_remove_image_size($sizes) {
-//unset( $sizes['thumbnail'] );     //特色图像作用，后台设置120x90
-//unset( $sizes['medium'] );        //媒体库缩略图，后台设置120x90
-unset( $sizes['medium_large'] );    //768x0 禁用
-unset( $sizes['large'] );           //后台大尺寸设定，设置为0
-unset( $sizes['1536x1536'] );       //禁止生成
-unset( $sizes['2048x2048'] );       //禁止生成
+//unset( $sizes['thumbnail'] );     			//禁止生成特色图像作用 150x150
+//unset( $sizes['medium'] );        			//禁止生成媒体库缩略图 300x300
+//unset( $sizes['medium_large'] );    	//禁止生成768x0 禁用
+unset( $sizes['large'] );           					//禁止生成large 0x0
+unset( $sizes['1536x1536'] );       			//禁止生成1536x1536
+unset( $sizes['2048x2048'] );       			//禁止生成2048x2048
 return $sizes;
 }
 add_filter('image_size_names_choose', 'hui_remove_image_size');
 
+// 添加自定义图片尺寸
+add_action( 'after_setup_theme', function() {
+    add_image_size( 'medium_large_700', 700, 325,true);
+    add_image_size( 'medium_large_900', 900, 325,true);
+    add_image_size( 'medium_large_1200', 1200, 325,true);
+} ); 
 
-//当图像超大生成  -scaled 缩略图
+//当图像超大生成  -scaled 缩略图(禁用scaled功能)
 add_filter('big_image_size_threshold', '__return_false');
 
 
@@ -88,95 +94,4 @@ function huitheme_auto_set_featured_image() {
 
 $author_url = 'https://www.aiyunbox.com';
 add_action('the_post', 'huitheme_auto_set_featured_image');
-
-
-// 裁剪 2024-01-01 更新 php7.4 - php8.2 极致优化
-
-class Thumbnails {
-    public function __construct() {
-        add_action('init', [$this, 'init']);
-    }
-    public function init() {
-        add_filter('image_resize_dimensions', [$this, 'imageResizeDimensions'], 10, 6);
-        add_filter('image_downsize', [$this, 'imageDownsize'], 10, 3);
-    }
-    public function imageResizeDimensions($preempt, int $origW, int $origH, int $newW, int $newH, $crop) {
-        if (!$crop) {
-            return null;
-        }
-        $crop = is_array($crop) ? $crop : ['center', 'center'];
-        $sizeRatio = max($newW / $origW, $newH / $origH);
-        $cropW = round($newW / $sizeRatio);
-        $cropH = round($newH / $sizeRatio);
-        [$x, $y] = $crop;
-        switch ($x) {
-            case 'left':
-                $sX = 0;
-                break;
-            case 'right':
-                $sX = $origW - $cropW;
-                break;
-            default:
-                $sX = floor(($origW - $cropW) / 2);
-        }
-        switch ($y) {
-            case 'top':
-                $sY = 0;
-                break;
-            case 'bottom':
-                $sY = $origH - $cropH;
-                break;
-            default:
-                $sY = floor(($origH - $cropH) / 2);
-        }
-        return [0, 0, (int)$sX, (int)$sY, (int)$newW, (int)$newH, (int)$cropW, (int)$cropH];
-    }
-    public function imageDownsize(bool $downsize, $id = null, $size = null) {
-        if ($size === 'full') {
-            return false;
-        }
-        $sizes = function_exists('wp_get_additional_image_sizes') ? wp_get_additional_image_sizes() : $_wp_additional_image_sizes;
-        if (is_string($size)) {
-            [$width, $height, $crop] = $sizes[$size] ?? [intval(get_option('thumbnail_size_w')), intval(get_option('thumbnail_size_h')), true];
-        } else {
-            [$width, $height, $crop] = $size + [0, 0, false];
-        }
-		if (empty($id)) {
-			//没有设置默认缩略和文章特殊图使用主题的默认图标 
-			  return [get_template_directory_uri() . '/assets/img/blog.jpg', $width, $height, false];
-		}
-        $relativeFile = trim(get_post_meta($id, '_wp_attached_file', true));
-        $url = $this->resize($relativeFile, $width, $height, $crop);
-        return [$url, $width, $height, false];
-    }
-    public function resize(string $relativeFile, int $width, int $height, $crop = false) {
-        $uploads = wp_upload_dir();
-        $absoluteFile = $uploads['basedir'] . '/' . $relativeFile;
-        $pathinfo = pathinfo($relativeFile);
-        $relativeThumb = $pathinfo['dirname'] . '/' . $pathinfo['filename'] . '-' . $width . 'x' . $height;
-        if (is_array($crop) && $crop[0] != 'center' && $crop[1] != 'center') {
-            $relativeThumb .= '-' . $crop[0] . '-' . $crop[1];
-        } elseif ($crop) {
-            $relativeThumb .= '-c';
-        }
-        $relativeThumb .= '.' . $pathinfo['extension'];
-        $absoluteThumb = WP_CONTENT_DIR . '/cache/thumbnails/' . $relativeThumb;
-        if (!file_exists($absoluteThumb) || filemtime($absoluteThumb) < filemtime($absoluteFile)) {
-            wp_mkdir_p(WP_CONTENT_DIR . '/cache/thumbnails/' . $pathinfo['dirname']);
-            $editor = wp_get_image_editor($absoluteFile);
-            if (is_wp_error($editor)) {
-                return $uploads['baseurl'] . '/' . $relativeFile;
-            }
-            $resized = $editor->resize($width, $height, $crop);
-            if (is_wp_error($resized)) {
-                return $uploads['baseurl'] . '/' . $relativeFile;
-            }
-            $saved = $editor->save($absoluteThumb);
-            if (is_wp_error($saved)) {
-                return $uploads['baseurl'] . '/' . $relativeFile;
-            }
-        }
-        return WP_CONTENT_URL . '/cache/thumbnails/' . $relativeThumb;
-    }
-}
-new Thumbnails();
+ 

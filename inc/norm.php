@@ -1,5 +1,51 @@
 <?php
 
+
+// 替换 WordPress 默认的 gallery 输出，让 Fancybox 预览原图
+add_filter('post_gallery', 'custom_gallery_output_fancybox', 10, 3);
+
+function custom_gallery_output_fancybox($output, $attr, $instance) {
+    global $post;
+
+    // 获取图库图片 ID
+    $ids = [];
+    if (isset($attr['ids'])) {
+        $ids = explode(',', $attr['ids']);
+    } elseif (!empty($attr['include'])) {
+        $ids = explode(',', $attr['include']);
+    }
+
+    if (empty($ids)) return '';
+
+    // 开始输出 HTML
+    $output = '<div class="my-fancybox-gallery">';
+
+    foreach ($ids as $id) {
+        // 缩略图 (medium)
+		$thumb = wp_get_attachment_image_src($id, 'medium');
+         
+        // 原图 (full)
+        $full = wp_get_attachment_image_src($id, 'full');
+		if(!$thumb && !$full )  continue;
+
+        $alt = get_post_meta($id, '_wp_attachment_image_alt', true);
+        $caption = wp_get_attachment_caption($id);
+
+        $output .= '
+            <a href="' . esc_url($full[0]) . '" data-fancybox="gallery" data-caption="' . esc_attr($caption) . '">
+                <img src="' . esc_url($thumb[0]) . '" alt="' . esc_attr($alt) . '" />
+            </a>
+        ';
+    }
+
+    $output .= '</div>';
+
+    return $output;
+}
+
+
+
+
 /**
  * 向经典编辑器添加“代码块”按钮
  */

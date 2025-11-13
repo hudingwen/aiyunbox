@@ -33,9 +33,9 @@
 <div class="post_images post_loop">
     <?php
     if ( has_post_thumbnail() ) {
-        the_post_thumbnail(array(920, 400, true));
+       the_post_thumbnail('medium');
     } else {
-        echo wp_get_attachment_image(get_theme_mod('ds_nopic'), array(920, 400, true));
+         echo wp_get_attachment_image(get_theme_mod('ds_nopic'), 'medium');
     }
     ?>
     <div class="post_images_foot">
@@ -58,9 +58,9 @@
                 <a class="post_def_left" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>">
                 <?php
                 if ( has_post_thumbnail() ) {
-                    the_post_thumbnail(array(400, 280, true));
+                    the_post_thumbnail('medium');
                 } else {
-                    echo wp_get_attachment_image(get_theme_mod('ds_nopic'), array(400, 280, true));
+                    echo wp_get_attachment_image(get_theme_mod('ds_nopic'), 'medium');
                 }
                 ?>
                 </a>
