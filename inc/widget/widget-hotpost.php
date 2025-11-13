@@ -21,11 +21,11 @@ class huitheme_hot_posts extends WP_Widget {
 
         <li class="widget_hot_li">
             <?php
-            if ( has_post_thumbnail() ) {
-                the_post_thumbnail(array(400, 280, true));
-            } else {
-                echo wp_get_attachment_image( get_theme_mod('ds_nopic') , array(400, 280, true));
-            }
+              if ( has_post_thumbnail() ) {
+			   the_post_thumbnail('medium');
+			} else {
+				 echo wp_get_attachment_image(get_theme_mod('ds_nopic'), 'medium');
+			}
             ?>
             <div class="hot_post_info">
                 <h4><a class="stretched-link" href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
